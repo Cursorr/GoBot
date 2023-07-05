@@ -15,7 +15,6 @@ var eventHandlers = []interface{}{
 	events.OnInviteDelete,
 	events.OnMemberJoin,
 	events.OnMemberRemove,
-	commands.TestCommand,
 }
 
 func RegisterEvents(s *discordgo.Session) {
