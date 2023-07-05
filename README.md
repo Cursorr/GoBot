@@ -2,7 +2,7 @@
 
 # What is it ?
 
-It is an invite tracker discord bot made with GO.
+It is an invite tracker discord bot made with GO (discordgo) and MongoDB.
 
 # Contributing
 
