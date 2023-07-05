@@ -41,7 +41,6 @@ func OnMemberJoin(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 	}
 
 	updateInvitesMap(s, guild_id)
-
 }
 
 func OnMemberRemove(s *discordgo.Session, member *discordgo.GuildMemberRemove) {

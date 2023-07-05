@@ -13,7 +13,6 @@ func OnInviteCreate(s *discordgo.Session, invite *discordgo.InviteCreate) {
 	}
 }
 
-
 func OnInviteDelete(s *discordgo.Session, invite *discordgo.InviteDelete) {
 	guildID := invite.GuildID
 	if _, ok := invitesMap[guildID]; ok {

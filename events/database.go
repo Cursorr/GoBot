@@ -42,7 +42,6 @@ func connectDB() {
 
 	projectDB = client.Database("gobot")
 	invitesCollection = projectDB.Collection("invites")
-
 }
 
 func UpdateUserData(guildID, userID string, query bson.D) {

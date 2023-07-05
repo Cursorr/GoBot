@@ -1,15 +1,12 @@
 package events
 
-import (
+import "github.com/bwmarrin/discordgo"
 
-	"github.com/bwmarrin/discordgo"
-)
 
 var invitesMap map[string]map[string]*discordgo.Invite
 
 func init() { 
 	invitesMap = make(map[string]map[string]*discordgo.Invite)
-
 }
 
 func updateInvitesMap(s *discordgo.Session, guildID string) {
