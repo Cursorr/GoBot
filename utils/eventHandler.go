@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"github.com/Cursorr/gobot/commands"
 	"github.com/Cursorr/gobot/events"
 	"github.com/bwmarrin/discordgo"
 )
