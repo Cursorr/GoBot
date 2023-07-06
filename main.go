@@ -7,12 +7,33 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/Cursorr/gobot/utils"
+	"github.com/Cursorr/gobot/events"
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
 
-func main() {
+type Bot struct {
+	Session *discordgo.Session
+}
+
+func (bot *Bot) RegisterHandlers() {
+	var eventHandlers = []interface{}{
+		events.OnReady,
+		events.OnGuildJoin,
+		events.OnGuildRemove,
+		events.OnInviteCreate,
+		events.OnInviteDelete,
+		events.OnMemberJoin,
+		events.OnMemberRemove,
+	}
+
+	for _, event := range eventHandlers {
+		bot.Session.AddHandler(event)
+	}
+
+}
+
+func (bot *Bot) Start() {
 	godotenv.Load()
 	token := os.Getenv("TOKEN")
 
@@ -25,7 +46,9 @@ func main() {
 
 	session.Identify.Intents = discordgo.IntentsAll
 
-	utils.RegisterEvents(session)
+	bot.Session = session
+
+	bot.RegisterHandlers()
 
 	err = session.Open()
 
@@ -40,4 +63,9 @@ func main() {
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
+}
+
+func main() {
+	bot := Bot{}
+	bot.Start()
 }
