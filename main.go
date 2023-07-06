@@ -34,7 +34,11 @@ func (bot *Bot) RegisterHandlers() {
 }
 
 func (bot *Bot) Start() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	token := os.Getenv("TOKEN")
 
 	session, err := discordgo.New("Bot " + token)
@@ -56,7 +60,13 @@ func (bot *Bot) Start() {
 		log.Fatal(err)
 		return
 	}
-	defer session.Close()
+	defer func(session *discordgo.Session) {
+		err := session.Close()
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+	}(session)
 
 	fmt.Println("Bot en ligne.")
 
