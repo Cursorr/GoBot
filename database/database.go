@@ -11,17 +11,17 @@ import (
 
 var Instance *MongoDatabase
 
-func init() { 
+func init() {
 	Instance = NewMongoDatabase()
 	Instance.connectDB()
 }
 
 type UserData struct {
-	ID      	string			`bson:"_id"`
-	GuildID 	string          `bson:"guild_id"`
-	InviterID 	string 			`bson:"inviter_id"`
-	Invites 	int            	`bson:"invites"`
-	Left 		int				`bson:"left"`
+	ID        string `bson:"_id"`
+	GuildID   string `bson:"guild_id"`
+	InviterID string `bson:"inviter_id"`
+	Invites   int    `bson:"invites"`
+	Left      int    `bson:"left"`
 }
 
 type Database interface {
@@ -30,10 +30,10 @@ type Database interface {
 }
 
 type MongoDatabase struct {
-	client             *mongo.Client
-	projectDB          *mongo.Database
-	invitesCollection  *mongo.Collection
-	ctx                context.Context
+	client            *mongo.Client
+	projectDB         *mongo.Database
+	invitesCollection *mongo.Collection
+	ctx               context.Context
 }
 
 func NewMongoDatabase() *MongoDatabase {
@@ -60,8 +60,9 @@ func (db *MongoDatabase) connectDB() {
 
 func (db *MongoDatabase) UpdateUserData(guildID, userID string, query bson.D) {
 	filter := bson.D{
-		{Key: "_id", Value: userID}, 
-		{Key: "guild_id", Value: guildID}}
+		{Key: "_id", Value: userID},
+		{Key: "guild_id", Value: guildID},
+	}
 	opts := options.Update().SetUpsert(true)
 
 	_, err := db.invitesCollection.UpdateOne(db.ctx, filter, query, opts)
@@ -72,8 +73,9 @@ func (db *MongoDatabase) UpdateUserData(guildID, userID string, query bson.D) {
 
 func (db *MongoDatabase) GetUserData(guildID, userID string) (UserData, error) {
 	filter := bson.D{
-		{Key: "_id", Value: userID}, 
-		{Key: "guild_id", Value: guildID}}
+		{Key: "_id", Value: userID},
+		{Key: "guild_id", Value: guildID},
+	}
 
 	var data UserData
 
