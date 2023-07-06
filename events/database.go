@@ -9,15 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var client *mongo.Client
-var projectDB *mongo.Database
-var invitesCollection *mongo.Collection
-
-var ctx context.Context
+var dbInstance *MongoDatabase
 
 func init() { 
-	connectDB() 
-	ctx = context.TODO()
+	dbInstance = NewMongoDatabase()
+	dbInstance.connectDB()
 }
 
 type UserData struct {
@@ -28,7 +24,23 @@ type UserData struct {
 	Left 		int				`bson:"left"`
 }
 
-func connectDB() {
+type Database interface {
+	UpdateUserData(guildID, userID string, query bson.D)
+	GetUserData(guildID, userID string) (UserData, error)
+}
+
+type MongoDatabase struct {
+	client             *mongo.Client
+	projectDB          *mongo.Database
+	invitesCollection  *mongo.Collection
+	ctx                context.Context
+}
+
+func NewMongoDatabase() *MongoDatabase {
+	return &MongoDatabase{}
+}
+
+func (db *MongoDatabase) connectDB() {
 	clientOptions := options.Client()
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
@@ -40,32 +52,32 @@ func connectDB() {
 		log.Fatal(err)
 	}
 
-	projectDB = client.Database("gobot")
-	invitesCollection = projectDB.Collection("invites")
+	db.client = client
+	db.projectDB = client.Database("gobot")
+	db.invitesCollection = db.projectDB.Collection("invites")
+	db.ctx = context.TODO()
 }
 
-func updateUserData(guildID, userID string, query bson.D) {
+func (db *MongoDatabase) updateUserData(guildID, userID string, query bson.D) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
 	opts := options.Update().SetUpsert(true)
 
-	_, err := invitesCollection.UpdateOne(ctx, filter, query, opts)
-
+	_, err := db.invitesCollection.UpdateOne(db.ctx, filter, query, opts)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func getUserData(guildID, userID string) (UserData, error) {
+func (db *MongoDatabase) getUserData(guildID, userID string) (UserData, error) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
 
 	var data UserData
 
-	err := invitesCollection.FindOne(ctx, filter).Decode(&data)
-
+	err := db.invitesCollection.FindOne(db.ctx, filter).Decode(&data)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return UserData{userID, userID, "", 0, 0}, err
