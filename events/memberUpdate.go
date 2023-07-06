@@ -31,11 +31,11 @@ func OnMemberJoin(s *discordgo.Session, member *discordgo.GuildMemberAdd) {
 
 	invite := findInvite(befores_invites, actual_invites)
 	if invite != nil {
-		UpdateUserData(guild_id, invite.Inviter.ID, bson.D{{
+		updateUserData(guild_id, invite.Inviter.ID, bson.D{{
 			Key: "$inc", Value: bson.D{{
 				Key: "invites", Value: 1}}}})
 	
-		UpdateUserData(guild_id, member.User.ID, bson.D{{
+		updateUserData(guild_id, member.User.ID, bson.D{{
 			Key: "$set", Value: bson.D{{
 				Key: "inviter_id", Value: invite.Inviter.ID}}}})
 	}
@@ -48,14 +48,14 @@ func OnMemberRemove(s *discordgo.Session, member *discordgo.GuildMemberRemove) {
 
 	if member.User.Bot { return }
 
-	data, err := GetUserData(guild_id, member.User.ID)
+	data, err := getUserData(guild_id, member.User.ID)
 
 	if err != nil {
 		return
 	}
 
 	if data.InviterID != "" {
-		UpdateUserData(guild_id, data.InviterID, bson.D{{
+		updateUserData(guild_id, data.InviterID, bson.D{{
 			Key: "$inc", Value: bson.D{
 				{Key: "invites", Value: -1},
 				{Key: "left", Value: 1}}}})

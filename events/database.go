@@ -44,7 +44,7 @@ func connectDB() {
 	invitesCollection = projectDB.Collection("invites")
 }
 
-func UpdateUserData(guildID, userID string, query bson.D) {
+func updateUserData(guildID, userID string, query bson.D) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
@@ -57,7 +57,7 @@ func UpdateUserData(guildID, userID string, query bson.D) {
 	}
 }
 
-func GetUserData(guildID, userID string) (UserData, error) {
+func getUserData(guildID, userID string) (UserData, error) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
