@@ -1,4 +1,4 @@
-package events
+package database
 
 import (
 	"context"
@@ -9,11 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var dbInstance *MongoDatabase
+var Instance *MongoDatabase
 
 func init() { 
-	dbInstance = NewMongoDatabase()
-	dbInstance.connectDB()
+	Instance = NewMongoDatabase()
+	Instance.connectDB()
 }
 
 type UserData struct {
@@ -58,7 +58,7 @@ func (db *MongoDatabase) connectDB() {
 	db.ctx = context.TODO()
 }
 
-func (db *MongoDatabase) updateUserData(guildID, userID string, query bson.D) {
+func (db *MongoDatabase) UpdateUserData(guildID, userID string, query bson.D) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
@@ -70,7 +70,7 @@ func (db *MongoDatabase) updateUserData(guildID, userID string, query bson.D) {
 	}
 }
 
-func (db *MongoDatabase) getUserData(guildID, userID string) (UserData, error) {
+func (db *MongoDatabase) GetUserData(guildID, userID string) (UserData, error) {
 	filter := bson.D{
 		{Key: "_id", Value: userID}, 
 		{Key: "guild_id", Value: guildID}}
