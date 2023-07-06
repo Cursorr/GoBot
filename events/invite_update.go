@@ -4,7 +4,7 @@ import "github.com/bwmarrin/discordgo"
 
 var invitesMap map[string]map[string]*discordgo.Invite
 
-func init() { 
+func init() {
 	invitesMap = make(map[string]map[string]*discordgo.Invite)
 }
 
@@ -30,7 +30,7 @@ func OnInviteCreate(s *discordgo.Session, invite *discordgo.InviteCreate) {
 	}
 }
 
-func OnInviteDelete(s *discordgo.Session, invite *discordgo.InviteDelete) {
+func OnInviteDelete(_ *discordgo.Session, invite *discordgo.InviteDelete) {
 	guildID := invite.GuildID
 	if _, ok := invitesMap[guildID]; ok {
 		delete(invitesMap[guildID], invite.Code)
